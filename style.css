@@ -1,9 +1,5 @@
 body {
     background: linear-gradient(90deg,rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 }
 .b1 {
     display: block;
