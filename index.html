@@ -16,7 +16,7 @@
       height: 100%;
       font-family: 'Segoe UI', sans-serif;
       overflow: hidden;
-      color: white;
+      color: rgb(0, 0, 0);
     }
 
     .centered {
@@ -29,6 +29,7 @@
       transition: all 2s ease;
       position: relative;
       overflow: hidden;
+      transition: background-color 1s ease;
     }
 
     .centered::before {
@@ -38,18 +39,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
+      background-color: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
       opacity: 0;
-      transition: opacity 2s ease;
+      transition: background-color 1s ease;
       z-index: 0;
     }
 
     .centered.active {
-      background-color: transparent;
+      background-color: white;
     }
-
-    .centered.active::before {
-      opacity: 1;
+    .centered.active1 {
+        background-color: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
     }
 
     .hidden {
@@ -84,10 +84,23 @@
       background-color: white;
     }
 
+    .switch.active1 {
+      background-color: transparent;
+      background: transparent;
+      border-color: transparent;
+      outline: transparent;
+    }
+
     .switch.active::before {
       transform: translateX(40px);
       background: #222;
     }
+
+    .switch.active1::before {
+      background-color: transparent;
+      background: transparent;
+    }
+
 
     .confession-screen {
       display: flex;
@@ -96,11 +109,12 @@
       align-items: center;
       padding: 40px;
       height: 100vh;
-      background: linear-gradient(135deg, #ff7eb9, #a18cd1);
+      background: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
       overflow: hidden;
       gap: 20px;
       opacity: 0;
       transition: opacity 1s ease 1s; /* Delayed fade-in */
+      color: white;
     }
 
     .confession-screen.show {
@@ -217,36 +231,35 @@
 
   <!-- YouTube music (autoplay when user interacts) -->
   <iframe
-    id="yt-audio"
-    width="0"
-    height="0"
-    src=""
-    frameborder="0"
-    allow="autoplay"
-    allowfullscreen
+  id="sc-audio"
+  width="0" 
+  height="0" 
+  scrolling="no" 
+  frameborder="no" 
+  allow="autoplay"
+  src=""
   ></iframe>
 
   <script>
     const toggle = document.getElementById('toggle');
     const intro = document.getElementById('intro');
     const confession = document.getElementById('confession');
-    const yt = document.getElementById('yt-audio');
+    const sc = document.getElementById('sc-audio');
 
     toggle.addEventListener('click', () => {
       // Start the toggle animation
       toggle.classList.toggle('active');
-      
-      // Start the background gradient transition
       intro.classList.add('active');
-      
+      sc.src = "https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/cocanhcola/yung-kai-blue-super-slowed&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false";
       // After the background transition is complete, show the confession
+      setTimeout(() => {
+        toggle.classList.toggle('active1');
+      }, 1000); // Matches the CSS transition duration
       setTimeout(() => {
         intro.classList.add('hidden');
         confession.classList.remove('hidden');
         confession.classList.add('show');
-        
-        // Load YouTube autoplay URL
-        yt.src = "https://www.youtube.com/embed/YOUTUBE_VIDEO_ID?autoplay=1&mute=0&controls=0&loop=1&playlist=4GZooGYBrN4";
+        intro.classList.add('active1');
       }, 2000); // Matches the CSS transition duration
     });
   </script>
