@@ -3,272 +3,638 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For You</title>
+  <title>Side Story: Just a Crush</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Comic Sans MS', cursive;
     }
 
-    body, html {
-      width: 100%;
-      height: 100%;
+    body {
       font-family: 'Segoe UI', sans-serif;
-      overflow: hidden;
-      color: rgb(0, 0, 0);
-    }
-
-    .centered {
+      background-color: #0d0d0d;
+      color: white;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       flex-direction: column;
-      background-color: black;
-      transition: all 2s ease;
-      position: relative;
       overflow: hidden;
-      transition: background-color 1s ease;
+      position: relative;
     }
 
-    .centered::before {
-      content: '';
-      position: absolute;
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
-      opacity: 0;
-      transition: background-color 1s ease;
-      z-index: 0;
+      background: linear-gradient(135deg, #ff66a3, #ff3385);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 1s ease, visibility 1s ease;
     }
 
-    .centered.active {
-      background-color: white;
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
     }
-    .centered.active1 {
-        background-color: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: white;
+      text-align: center;
+    }
+
+    .skip-btn {
+      position: absolute;
+      bottom: 30px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .skip-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .scene {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      padding: 20px;
+    }
+
+    .scene.visible {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .intro {
+      background: radial-gradient(circle, #222 0%, #000 100%);
+      z-index: 3;
+    }
+
+    .intro-content {
+      text-align: center;
+      transform: translateY(-50px);
+    }
+
+    .intro h1 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      text-align: center;
+      background: linear-gradient(to right, #ff66a3, #ff3385);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(255, 102, 163, 0.3);
+    }
+
+    .intro p {
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+
+    .intro button, .next-btn, .choice-box button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      background: linear-gradient(45deg, #ff66a3, #ff3385);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 102, 163, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intro button:hover, .next-btn:hover, .choice-box button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 102, 163, 0.4);
+    }
+
+    .intro button:active, .next-btn:active, .choice-box button:active {
+      transform: translateY(1px);
+    }
+
+    .book {
+      background: #fff5f8;
+      color: #333;
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(255, 105, 180, 0.3);
+      animation: openBook 1s ease forwards;
+      transform: scale(0.9);
+      opacity: 0;
+      position: relative;
+      border: 1px solid rgba(255, 102, 163, 0.2);
+    }
+
+    .book::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 1px solid rgba(255, 102, 163, 0.1);
+      border-radius: 15px;
+      pointer-events: none;
+    }
+
+    .book.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    @keyframes openBook {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .book p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .choice-box {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .choice-box button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 8px;
+      min-width: 150px;
+    }
+
+    .memory-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .memory-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 80%;
+      text-align: center;
+      color: #333;
+    }
+
+    .polaroid {
+      background: white;
+      padding: 15px 15px 40px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transform: rotate(-5deg);
+      transition: all 0.3s ease;
+      margin: 20px auto;
+      max-width: 250px;
+      display: none;
+    }
+
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.05);
+    }
+
+    .polaroid img {
+      width: 100%;
+      height: auto;
+      border: 1px solid #eee;
+    }
+
+    .polaroid p {
+      text-align: center;
+      font-family: 'Comic Sans MS', cursive;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    .heart {
+      position: absolute;
+      pointer-events: none;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    .typing-effect {
+      border-right: 2px solid #ff66a3;
+      white-space: normal;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;  
+      text-align: center;
     }
 
     .hidden {
       display: none;
     }
 
-    .switch, button {
-    -webkit-tap-highlight-color: transparent;
-    outline: none;
-    -webkit-focus-ring-color: transparent;
-    touch-action: manipulation;
-    user-select: none;
-    }
-
-    .switch {
-      width: 80px;
-      height: 40px;
-      background: #222;
-      border-radius: 20px;
-      position: relative;
-      cursor: pointer;
-      box-shadow: 0 0 10px #ffffff30;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1;
-    }
-
-    .switch::before {
-      content: '';
-      position: absolute;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: white;
-      top: 3px;
-      left: 3px;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .switch.active {
-      background-color: white;
-    }
-
-    .switch.active1 {
-      background-color: transparent;
-      background: transparent;
-      border-color: transparent;
-      outline: transparent;
-    }
-
-    .switch.active::before {
-      transform: translateX(40px);
-      background: #222;
-    }
-
-    .switch.active1::before {
-      background-color: transparent;
-      background: transparent;
-    }
-
-
-    .confession-screen {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 40px;
-      height: 100vh;
-      background: linear-gradient(90deg, rgba(255, 117, 214, 1) 0%, rgba(240, 46, 139, 1) 49%, rgba(152, 83, 237, 1) 100%);
-      overflow: hidden;
-      gap: 20px;
-      opacity: 0;
-      transition: opacity 1s ease 1s; /* Delayed fade-in */
-      color: white;
-    }
-
-    .confession-screen.show {
-      opacity: 1;
-    }
-
-    .confession-text {
-      flex: 1;
-      font-size: 1.5rem;
-      line-height: 1.8;
-      opacity: 0;
-      animation: fadeIn 3s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
-
-    .flowers {
-      flex: 1;
-      position: relative;
+    .final-message {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
-    }
-
-    .flower {
-      position: absolute;
-      border-radius: 50%;
-      background: radial-gradient(circle, #ffffff60 0%, #ff00ff40 60%, transparent 100%);
-      opacity: 0.5;
-      animation: bloom 5s ease-in-out infinite;
-    }
-
-    .flower:nth-child(1) {
-      width: 100px;
-      height: 100px;
-      top: 20%;
-      left: 10%;
-      animation-delay: 0s;
-    }
-
-    .flower:nth-child(2) {
-      width: 120px;
-      height: 120px;
-      top: 50%;
-      left: 40%;
-      animation-delay: 1s;
-    }
-
-    .flower:nth-child(3) {
-      width: 80px;
-      height: 80px;
-      top: 70%;
-      left: 20%;
-      animation-delay: 2s;
-    }
-
-    @keyframes bloom {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 0.5;
-      }
-      50% {
-        transform: scale(1.2);
-        opacity: 0.9;
-      }
-    }
-
-    iframe {
+      background-color: rgba(0, 0, 0, 0.9);
       display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+      flex-direction: column;
     }
 
-    @media (max-width: 768px) {
-      .confession-screen {
+    .final-message-content {
+      background: linear-gradient(135deg, #ff66a3, #ff3385);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 80%;
+      text-align: center;
+      color: white;
+      box-shadow: 0 10px 30px rgba(255, 102, 163, 0.5);
+    }
+
+    @media (max-width: 500px) {
+      .intro h1 {
+        font-size: 1.6rem;
+      }
+      .book p {
+        font-size: 1rem;
+      }
+      .choice-box {
         flex-direction: column;
-        justify-content: center;
-        text-align: center;
+        width: 100%;
       }
-
-      .confession-text {
-        font-size: 1.2rem;
-      }
-
-      .flowers {
-        height: 300px;
-        margin-top: 30px;
+      .choice-box button {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Intro Switch Screen -->
-  <div class="centered" id="intro">
-    <div class="switch" id="toggle"></div>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loader"></div>
+    <div class="loading-text">Loading my thoughts...</div>
+    <button class="skip-btn" id="skipBtn">Skip Loading</button>
   </div>
 
-  <!-- Confession Content -->
-  <div class="confession-screen hidden" id="confession">
-    <div class="confession-text">
-      <p>
-        There's something I've been meaning to say... but words never came out the way I wanted.
-        Maybe that's why I built this little place instead—to speak from silence, with petals and sound.
-        If you're reading this, it means you were meant to.
+  <!-- Intro Scene -->
+  <div class="scene intro" id="intro">
+    <div class="intro-content animate__animated animate__fadeIn">
+      <h1 class="animate__animated animate__pulse animate__infinite"></h1>
+      <p>A heartfelt confession that's been years in the making...</p>
+      <button id="startBtn">Read my thoughts</button>
+    </div>
+  </div>
+
+  <!-- Scene 1 -->
+  <div class="scene" id="scene1">
+    <div class="book" id="book1">
+      <p class="typing-effect" id="typing1">
+        Hi... I guess this might be unexpected.<br>
+        But I can't keep this feeling hidden forever.<br>
+        I just want to express what's in my heart.
       </p>
-    </div>
-    <div class="flowers">
-      <div class="flower"></div>
-      <div class="flower"></div>
-      <div class="flower"></div>
+      <div class="choice-box">
+        <button onclick="nextScene(2)">Continue Reading</button>
+      </div>
     </div>
   </div>
 
-  <!-- YouTube music (autoplay when user interacts) -->
+  <!-- Scene 2 -->
+  <div class="scene" id="scene2">
+    <div class="book" id="book2">
+      <p class="typing-effect" id="typing2">
+      You are the most beautiful person I have ve ever seen, not just outside, but in your personality, your humor, your whole vibe.<br><br>
+      The way you smile… it's honestly something I could never forget.You've been one of my biggest inspirations.<br><br>
+      Even from a distance, just seeing you gave me the motivation to be better.
+      </p>
+      <div class="choice-box">
+        <button onclick="nextScene(3)">Turn the Page</button>
+        <button onclick="showMemory('first-sight')">Remember First Sight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 3 -->
+  <div class="scene" id="scene3">
+    <div class="book" id="book3">
+      <p class="typing-effect" id="typing3">
+        I've liked you since kindergarten.<br><br>
+        Every day, I used to wish we'd be classmates—talk together, walk home, share little moments.<br><br>
+        I've been admiring you for nine years now.<br><br>
+        There were so many times I wrote letters like this…<br><br>
+        But I never had the courage to give them to you.
+      </p>
+      <div class="choice-box">
+        <button onclick="showNote()">Find Hidden Note</button>
+        <button onclick="nextScene(4)">Continue the Story</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 4 -->
+  <div class="scene" id="scene4">
+    <div class="book" id="book4">
+      <p class="typing-effect" id="typing4">
+        In 10th grade, during graduation, I looked for you.<br><br>
+        I wanted so badly to finally tell you.<br><br>
+        But I got scared… and kept it all inside.<br><br>
+        Then, I saw you again—and all those feelings came rushing back.
+      </p>
+      <div class="polaroid" id="graduation-photo">
+        <img src="https://placeholder.pics/svg/300x200/DEDEDE/555555/Graduation%20Day" alt="Graduation Day">
+        <p>That day I almost told you...</p>
+      </div>
+      <div class="choice-box">
+        <button onclick="showPhoto('graduation-photo')">See Memory</button>
+        <button onclick="nextScene(5)">Keep Going</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 5 -->
+  <div class="scene" id="scene5">
+    <div class="book" id="book5">
+      <p class="typing-effect" id="typing5">
+        So here I am.<br><br>
+        I made this website just for you.<br><br>
+        I don't expect anything. I know you might not feel the same.<br><br>
+        And if you don't… it's okay.<br><br>
+        Ignore this, reject it—whatever feels right for you.<br><br>
+        I just wanted to tell you the truth, finally.
+      </p>
+      <div class="choice-box">
+        <button onclick="createHearts()">❤️</button>
+        <button onclick="nextScene(6)">One Last Thing...</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene 6 -->
+  <div class="scene" id="scene6">
+    <div class="book" id="book6">
+      <p class="typing-effect" id="typing6">
+        I hope you liked the site, even just a little.<br><br>
+        I probably won't see you again after this…<br><br>
+        So I guess this is goodbye.
+      </p>
+      <div class="choice-box">
+        <button onclick="showFinalMessage()">Close the Book</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Memory Popup -->
+  <div class="memory-container" id="memory-container">
+    <div class="memory-content">
+      <h3 id="memory-title">Memory</h3>
+      <p id="memory-text"></p>
+      <button onclick="hideMemory()">Return to Story</button>
+    </div>
+  </div>
+
+  <!-- Final Message -->
+  <div class="final-message" id="final-message">
+    <div class="final-message-content animate__animated animate__zoomIn">
+      <h2>Thank You</h2>
+      <p>For taking the time to read my heart's story.</p>
+      <p>This confession was years in the making.</p>
+      <button onclick="location.reload()">Read Again</button>
+    </div>
+  </div>
+
+  <!-- SoundCloud Player -->
   <iframe
-  id="sc-audio"
-  width="0" 
-  height="0" 
-  scrolling="no" 
-  frameborder="no" 
-  allow="autoplay"
-  src=""
-  ></iframe>
+    id="sc-audio"
+    width="0"
+    height="0"
+    scrolling="no"
+    frameborder="no"
+    allow="autoplay"
+    src="">
+  </iframe>
 
   <script>
-    const toggle = document.getElementById('toggle');
-    const intro = document.getElementById('intro');
-    const confession = document.getElementById('confession');
-    const sc = document.getElementById('sc-audio');
+    // Loading screen functionality
+    const loadingScreen = document.getElementById('loadingScreen');
+    const skipBtn = document.getElementById('skipBtn');
+    
+    // Simulate loading with timeout
+    let loadingTimeout = setTimeout(() => {
+      hideLoadingScreen();
+    }, 3000); // 3 seconds loading time
+    
+    function hideLoadingScreen() {
+      loadingScreen.classList.add('hidden');
+      document.getElementById('intro').classList.add('visible');
+      clearTimeout(loadingTimeout);
+    }
+    
+    // Skip loading button
+    skipBtn.addEventListener('click', hideLoadingScreen);
 
-    toggle.addEventListener('click', () => {
-      // Start the toggle animation
-      toggle.classList.toggle('active');
-      intro.classList.add('active');
-      sc.src = "https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/cocanhcola/yung-kai-blue-super-slowed&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false";
-      // After the background transition is complete, show the confession
+    const scenes = [
+      document.getElementById('intro'),
+      document.getElementById('scene1'),
+      document.getElementById('scene2'),
+      document.getElementById('scene3'),
+      document.getElementById('scene4'),
+      document.getElementById('scene5'),
+      document.getElementById('scene6')
+    ];
+
+    const typingElements = [
+      null,
+      document.getElementById('typing1'),
+      document.getElementById('typing2'),
+      document.getElementById('typing3'),
+      document.getElementById('typing4'),
+      document.getElementById('typing5'),
+      document.getElementById('typing6')
+    ];
+
+    function enableButtonsWithDelay() {
+      const allButtons = document.querySelectorAll('.scene.visible button');
+      allButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+      });
+
       setTimeout(() => {
-        toggle.classList.toggle('active1');
-      }, 1000); // Matches the CSS transition duration
-      setTimeout(() => {
-        intro.classList.add('hidden');
-        confession.classList.remove('hidden');
-        confession.classList.add('show');
-        intro.classList.add('active1');
-      }, 2000); // Matches the CSS transition duration
+        allButtons.forEach(btn => {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+        });
+      }, 10000);
+    }
+
+    // Initialize typing effects
+    function typeWriter(element, text, i) {
+      if (i < text.length) {
+        // Handle HTML tags separately
+        if (text.substr(i, 4) === '<br>') {
+          element.innerHTML += '<br>';
+          i += 4;
+        } else {
+          element.innerHTML += text.charAt(i);
+          i++;
+        }
+        setTimeout(() => typeWriter(element, text, i), 20);
+      } else {
+        element.style.borderRight = 'none';
+      }
+    }
+
+    function initTypingEffects() {
+      typingElements.forEach((el, index) => {
+        if (el) {
+          // Get the raw HTML including <br> tags
+          const html = el.innerHTML;
+          el.innerHTML = '';
+          el.style.borderRight = '2px solid #ff66a3';
+          // Pass the raw HTML to the typewriter
+          typeWriter(el, html, 0);
+        }
+      });
+    }
+
+    function nextScene(index) {
+      scenes.forEach(scene => scene.classList.remove('visible'));
+      if (scenes[index]) {
+        scenes[index].classList.add('visible');
+        if (typingElements[index]) {
+          const text = typingElements[index].textContent || typingElements[index].innerText;
+          typingElements[index].innerHTML = '';
+          typingElements[index].style.borderRight = '2px solid #ff66a3';
+          typeWriter(typingElements[index], text, 0);
+        }
+        enableButtonsWithDelay();
+      }
+    }
+
+    function showMemory(memoryType) {
+      const container = document.getElementById('memory-container');
+      const title = document.getElementById('memory-title');
+      const text = document.getElementById('memory-text');
+      
+      container.style.display = 'flex';
+      
+      if (memoryType === 'first-sight') {
+        title.textContent = 'First Time I Saw You';
+        text.textContent = 'It was during recess. You were laughing with friends, and your smile caught my attention immediately. That moment stayed with me all these years.';
+      }
+    }
+
+    function hideMemory() {
+      document.getElementById('memory-container').style.display = 'none';
+    }
+
+    function showNote() {
+      alert("You found a crumpled note in the margins:\n\n'Today I'll tell them how I feel... maybe.'");
+    }
+
+    function showPhoto(id) {
+      const photo = document.getElementById(id);
+      photo.style.display = 'block';
+      photo.classList.add('animate__animated', 'animate__fadeIn');
+    }
+
+    function createHearts() {
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.classList.add('heart');
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.top = Math.random() * 100 + 'vh';
+        heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(heart);
+        
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+    }
+
+    function showFinalMessage() {
+      document.getElementById('final-message').style.display = 'flex';
+    }
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      nextScene(1);
+      document.getElementById('sc-audio').src = "https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/leolauj2012/yung-kai-blue-lyrics-mp3&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false";
+      initTypingEffects();
     });
   </script>
 </body>
