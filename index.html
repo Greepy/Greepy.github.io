@@ -1,149 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Click me</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: linear-gradient(135deg, #ff7692, #c300c3);
-      transition: background 1s ease-in-out;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMI | Soul of Japan</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #0a0a0a;
+            --accent: #c5a059; /* Gold */
+            --text: #ffffff;
+            --text-dim: #888888;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
 
-    .background {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #ff7692, #c300c3);
-      z-index: -1;
-      transition: background 1s ease-in-out;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-    .background.lit {
-      background: linear-gradient(135deg, #ff7692, #c300c3);
-    }
+        h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 400; }
 
-    body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      position: relative;
-    }
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(5,5,5,0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+        }
+        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 6px; color: var(--text); text-decoration: none; }
+        .nav-links a { color: var(--text); text-decoration: none; margin-left: 2rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
 
-    .button {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 25px;
-      background-color: white;
-      color: violet;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      margin-top: 20px;
-      z-index: 10;
-    }
+        /* Hero */
+        .hero {
+            height: 90vh;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), var(--bg)), 
+                        url('https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=2070&auto=format&fit=crop') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .hero-tag { color: var(--accent); letter-spacing: 5px; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 1rem; }
+        .hero h1 { font-size: clamp(3rem, 10vw, 6rem); margin-bottom: 1rem; }
+        .divider-diamond { display: flex; align-items: center; gap: 20px; color: var(--accent); margin: 20px 0; }
+        .divider-diamond span { width: 100px; height: 1px; background: var(--accent); opacity: 0.5; }
 
-    .button:hover {
-      transform: scale(1.1);
-    }
+        /* New "Philosophy" Section */
+        .philosophy {
+            padding: 100px 10%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5%;
+            align-items: center;
+        }
+        .phi-image-box { position: relative; padding: 20px; }
+        .phi-main-img { width: 100%; height: 500px; object-fit: cover; border: 1px solid var(--accent); padding: 10px; }
+        .phi-sub-img { position: absolute; bottom: -50px; right: -30px; width: 250px; height: 300px; object-fit: cover; border: 5px solid var(--bg); }
+        .phi-text h2 { font-size: 3rem; margin-bottom: 2rem; line-height: 1.2; }
+        .phi-text p { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 200; }
 
-    h1 {
-      font-size: 2.5rem;
-      font-style: italic;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(-30px);
-      transition: all 1s ease;
-    }
+        /* Menu Section with Golden Box */
+        .section-padding { padding: 80px 10%; }
+        .menu-header { text-align: center; margin-bottom: 4rem; }
+        
+        .filter-nav { display: flex; justify-content: center; gap: 2rem; margin-bottom: 3rem; }
+        .filter-btn { background: none; border: none; color: var(--text-dim); font-size: 0.75rem; letter-spacing: 2px; cursor: pointer; text-transform: uppercase; transition: 0.3s; position: relative; }
+        .filter-btn.active { color: var(--accent); }
+        .filter-btn.active::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 100%; height: 1px; background: var(--accent); }
 
-    h1.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+        /* The Golden Frame Box */
+        .menu-frame {
+            border: 1px solid var(--accent);
+            padding: 4rem 3rem;
+            position: relative;
+            min-height: 800px; /* Prevents website jumping */
+            background: rgba(10, 10, 10, 0.4);
+        }
+        .menu-frame::before {
+            content: "";
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            pointer-events: none;
+        }
 
-    .hearts-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      overflow: hidden;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
+        .menu-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 4rem;
+            row-gap: 2.5rem;
+            transition: opacity 0.4s ease;
+        }
 
-    .hearts-container.show {
-      opacity: 1;
-    }
+        .menu-item { display: flex; align-items: center; gap: 1.2rem; }
+        .menu-thumb { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; filter: grayscale(0.3); border: 1px solid var(--accent); }
+        .item-info { flex: 1; }
+        .item-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.2rem; }
+        .item-top h3 { font-size: 1.1rem; letter-spacing: 1px; }
+        .item-price { color: var(--accent); font-size: 0.9rem; font-weight: 600; }
+        .item-desc { color: var(--text-dim); font-size: 0.75rem; font-weight: 300; }
 
-    .heart {
-      width: 30px;
-      height: 30px;
-      background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center/contain;
-      position: absolute;
-      opacity: 0.7;
-      animation: floatSide 8s linear infinite;
-    }
+        /* Testimonials */
+        .testimonials { text-align: center; background: #080808; padding: 100px 10%; }
+        .quote-icon { color: var(--accent); font-size: 2rem; margin-bottom: 2rem; }
+        .testimonial-text { font-family: var(--font-serif); font-style: italic; font-size: 1.8rem; max-width: 800px; margin: 0 auto 2rem; color: #eee; }
 
-    @keyframes floatSide {
-      0% {
-        transform: translateY(100vh) scale(1);
-        opacity: 0;
-      }
-      20% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-100vh) scale(1.2);
-        opacity: 0;
-      }
-    }
-  </style>
+        /* Contact & Location */
+        .contact-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 4rem; margin-top: 4rem; }
+        .contact-form input, .contact-form textarea {
+            width: 100%; background: transparent; border: 1px solid #222; padding: 1rem; color: #fff; margin-bottom: 1.5rem; font-family: inherit;
+        }
+        .contact-form button { background: var(--accent); color: #000; border: none; padding: 1rem 3rem; cursor: pointer; font-weight: 700; letter-spacing: 2px; }
+        .map-wrapper { height: 100%; min-height: 400px; filter: grayscale(1) invert(0.9); border: 1px solid #222; }
+
+        /* Footer */
+        footer { border-top: 1px solid #111; padding: 5rem 10% 2rem; text-align: center; }
+        .social-links { margin: 2rem 0; }
+        .social-links a { color: var(--text); font-size: 1.2rem; margin: 0 1rem; transition: 0.3s; }
+        .social-links a:hover { color: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .philosophy, .menu-container, .contact-grid { grid-template-columns: 1fr; }
+            .phi-sub-img { display: none; }
+            .menu-frame { padding: 2rem 1rem; min-height: auto; }
+            .nav-links { display: none; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="background" id="bg"></div>
+    <nav>
+        <a href="#" class="logo">KAMI</a>
+        <div class="nav-links">
+            <a href="#philosophy">Our Story</a>
+            <a href="#menu">Menu</a>
+            <a href="#location">Location</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
 
-  <h1 id="message">Happy Mother's Day!</h1>
-  <button class="button" onclick="startShow()">Click me</button>
+    <section class="hero">
+        <span class="hero-tag" data-aos="fade-down">The Art of Minimalist Dining</span>
+        <h1 data-aos="fade-up">Divine Flavors</h1>
+        <div class="divider-diamond">
+            <span></span> ◆ <span></span>
+        </div>
+        <p style="letter-spacing: 3px; font-weight: 200; font-size: 0.8rem;">MANILA | TOKYO</p>
+    </section>
 
-  <div class="hearts-container" id="heartsContainer"></div>
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="philosophy">
+        <div class="phi-image-box" data-aos="fade-right">
+            <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1925&auto=format&fit=crop" class="phi-main-img" alt="Chef">
+            <img src="https://delishglobe.com/wp-content/uploads/2024/10/sashimi.png" class="phi-sub-img" alt="Sashimi">
+        </div>
+        <div class="phi-text" data-aos="fade-left">
+            <span>Our Philosophy</span>
+            <h2>Simple Ingredients, <br><span style="font-style: italic; color: var(--accent);">Exceptional Soul.</span></h2>
+            <p>At Kami, we believe that the highest form of culinary art is the one that respects the ingredient. Our fish is flown in daily from Toyosu, handled with techniques passed down through generations.</p>
+            <p>Every plate is a balance of "Umami" and aesthetics, designed to be a spiritual experience for the palate.</p>
+        </div>
+    </section>
 
-  <script>
-    function startShow() {
-      const bg = document.getElementById('bg');
-      bg.classList.add('lit');
-      document.getElementById('message').classList.add('show');
-      createFloatingHearts();
-      document.getElementById('heartsContainer').classList.add('show');
-      
-      // Remove the button after click
-      document.querySelector('.button').style.display = 'none';
-    }
+    <!-- Menu Section -->
+    <section id="menu" class="section-padding">
+        <div class="menu-header">
+            <span style="color: var(--accent); letter-spacing: 3px; font-size: 0.8rem;">DISCOVER</span>
+            <h2 style="font-size: 3rem;">The Digital Menu</h2>
+        </div>
 
-    function createFloatingHearts() {
-      const container = document.getElementById('heartsContainer');
-      container.innerHTML = ''; // Clear any existing hearts
-      for (let i = 0; i < 20; i++) {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        const side = i % 2 === 0 ? 'left' : 'right';
-        const offset = Math.random() * 80 + 10;
-        heart.style[side] = `${offset}px`;
-        heart.style.animationDelay = `${Math.random() * 5}s`;
-        container.appendChild(heart);
-      }
-    }
-  </script>
+        <div class="filter-nav">
+            <button class="filter-btn active" onclick="filterMenu('all')">All Selection</button>
+            <button class="filter-btn" onclick="filterMenu('appetizer')">Starters</button>
+            <button class="filter-btn" onclick="filterMenu('main')">Mains</button>
+            <button class="filter-btn" onclick="filterMenu('drink')">Sake & Spirit</button>
+        </div>
 
+        <div class="menu-frame" data-aos="fade-up">
+            <div class="menu-container" id="menuGrid">
+                <!-- Menu Items Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div data-aos="zoom-in">
+            <i class="fas fa-quote-right quote-icon"></i>
+            <p class="testimonial-text">"An unparalleled dining experience in the heart of the city. The Wagyu Aburi is quite literally the best I've had outside of Kyoto."</p>
+            <span style="letter-spacing: 4px; color: var(--accent); font-size: 0.7rem;">— LIFESTYLE ASIA</span>
+        </div>
+    </section>
+
+    <!-- Contact & Location -->
+    <section id="contact" class="section-padding">
+        <div class="contact-grid">
+            <div data-aos="fade-right">
+                <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Inquiries</h2>
+                <form class="contact-form">
+                    <input type="text" placeholder="Full Name">
+                    <input type="email" placeholder="Email Address">
+                    <textarea rows="5" placeholder="Tell us about your visit..."></textarea>
+                    <button type="submit">SUBMIT MESSAGE</button>
+                </form>
+            </div>
+            <div id="location" data-aos="fade-left">
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.325!2d121.048!3d14.548!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDMyJzUyLjgiTiAxMjHCsDAyJzUyLjgiRQ!5e0!3m2!1sen!2sph!4v1630000000000!5m2!1sen!2sph" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div style="margin-top: 1.5rem; font-size: 0.85rem;">
+                    <p><i class="fas fa-map-marker-alt" style="color:var(--accent); margin-right: 10px;"></i> 28th St, Bonifacio Global City, Manila</p>
+                    <p style="margin-top: 5px;"><i class="fas fa-phone" style="color:var(--accent); margin-right: 10px;"></i> +63 917 123 4567</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="logo">KAMI</div>
+        <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 1rem;">Experience the Spirit of Japan.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+        </div>
+        <p style="font-size: 0.6rem; color: #333; letter-spacing: 2px;">&copy; 2024 KAMI DINING GROUP. PHILIPPINES.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        const menuData = [
+            // Appetizers (6)
+            { name: "Truffle Edamame", price: "₱450", cat: "appetizer", img: "https://images.unsplash.com/photo-1615484477201-9f4953340fab?w=200", desc: "Steamed soybeans with white truffle oil and sea salt." },
+            { name: "Crispy Tuna Rice", price: "₱680", cat: "appetizer", img: "https://images.unsplash.com/photo-1617196034183-421b4917c92d?w=200", desc: "Spicy tuna tartare on pan-seared sushi rice blocks." },
+            { name: "Yellowtail Serrano", price: "₱850", cat: "appetizer", img: "https://theheirloompantry.co/wp-content/uploads/2022/04/hamachi-crudo-yellowtail-carpaccio-the-heirloom-pantry-05.jpg", desc: "Thinly sliced hamachi, serrano pepper, yuzu soy." },
+            { name: "Wagyu Gyoza", price: "₱720", cat: "appetizer", img: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=200", desc: "Hand-made dumplings with A5 beef and ginger." },
+            { name: "Rock Shrimp", price: "₱650", cat: "appetizer", img: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?w=200", desc: "Tempura shrimp tossed in creamy spicy aioli." },
+            { name: "Miso Nasu", price: "₱480", cat: "appetizer", img: "https://images.unsplash.com/photo-1616070829624-884057de0b29?w=200", desc: "Caramelized eggplant with sweet den miso." },
+            
+            // Mains (8)
+            { name: "Wagyu Aburi", price: "₱2,800", cat: "main", img: "https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=200", desc: "Lightly torched A5 Miyazaki beef with truffle ponzu." },
+            { name: "Black Cod Miso", price: "₱1,950", cat: "main", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=200", desc: "The signature 72-hour miso marinated cod." },
+            { name: "Lobster Zen Roll", price: "₱1,200", cat: "main", img: "https://images.unsplash.com/photo-1559466273-d95e72debaf8?w=200", desc: "Maine lobster, mango, and avocado in gold soy paper." },
+            { name: "Sushi Omakase", price: "₱3,500", cat: "main", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=200", desc: "10 pieces of premium daily arrivals from Japan." },
+            { name: "Spicy Miso Ramen", price: "₱850", cat: "main", img: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=200", desc: "Rich pork broth, chashu, and ajitama egg." },
+            { name: "Uni Carbonara", price: "₱1,650", cat: "main", img: "https://www.seriouseats.com/thmb/t_bJ0F3fuFMeJFagiNvdF-h7A-0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2019__09__20190717-sea-urchin-pasta-uni-16-aa53dee2980f45a5ace269f537f0a545.jpg", desc: "Hand-cut udon with sea urchin and smoked pancetta." },
+            { name: "Hokkaido Scallops", price: "₱1,400", cat: "main", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuhVFU09Eo52Cs4fTUvkVGWAorpm_9UiffQw&s", desc: "Pan-seared scallops with yuzu brown butter." },
+            { name: "Tofu Steak", price: "₱750", cat: "main", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200", desc: "Grilled organic tofu with ginger-scallion reduction." },
+
+            // Drinks (6)
+            { name: "Umeshu Spritz", price: "₱550", cat: "drink", img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=200", desc: "Plum wine, sparkling prosecco, and fresh shiso." },
+            { name: "Matcha Martini", price: "₱620", cat: "drink", img: "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=200", desc: "Vodka blended with ceremonial grade matcha." },
+            { name: "Hibiki Harmony", price: "₱950", cat: "drink", img: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Hibiki_the_premium_blended_whisky_from_Japanese_distiller_Suntory.jpg", desc: "Premium Japanese whisky over hand-carved ice." },
+            { name: "Kubota Sake", price: "₱1,200", cat: "drink", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFt22w0Woaj5ndwUukZlMgkMJGOk1MeL1GKw&s", desc: "Junmai Daiginjo served chilled in a cedar box." },
+            { name: "Yuzu Lemonade", price: "₱350", cat: "drink", img: "https://streetsmartnutrition.com/wp-content/uploads/2025/04/Sparkling-Yuzu-Lemonade-02.jpg", desc: "Refreshing yuzu citrus with garden mint." },
+            { name: "Ginger Smoke", price: "₱580", cat: "drink", img: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=200", desc: "Smoked bourbon, honey, and fresh ginger." }
+        ];
+
+        function renderMenu(items) {
+            const grid = document.getElementById('menuGrid');
+            grid.style.opacity = '0';
+            setTimeout(() => {
+                grid.innerHTML = items.map(item => `
+                    <div class="menu-item">
+                        <img src="${item.img}" class="menu-thumb" alt="${item.name}">
+                        <div class="item-info">
+                            <div class="item-top">
+                                <h3>${item.name}</h3>
+                                <span class="item-price">${item.price}</span>
+                            </div>
+                            <p class="item-desc">${item.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+                grid.style.opacity = '1';
+            }, 300);
+        }
+
+        function filterMenu(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            if (category === 'all') renderMenu(menuData);
+            else renderMenu(menuData.filter(i => i.cat === category));
+        }
+
+        renderMenu(menuData);
+    </script>
 </body>
 </html>
